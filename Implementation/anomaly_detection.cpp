@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "include/pca.hpp"
+#include "include/streamingData.hpp"
 #include "include/tde.hpp"
 
 std::vector<double> readFile(std::string filePath) // later this is the stream
@@ -62,31 +63,10 @@ void displayVectorofVectors(std::vector<std::vector<double>> data)
 int main()
 {
     std::cout << "Welcome to the Vizualizer...." << std::endl;
-    std::string readFilePath = "data/vibration_data.csv";
-    std::string writeFilePath = "data/vibration_output_data.csv";
 
-    std::vector<double> data = readFile(readFilePath);
-
-    TDE tde(100, data, 1, 1);
-    std::vector<std::vector<double>> windows = tde.time_delay_embedding(data);
-
-    PCA pca(2);
-    pca.learn(windows);
-
-    std::vector<std::vector<double>> plotData = pca.toPcaSpace(windows);
-
-    std::ofstream MyFile(writeFilePath);
-    for (int i = 0; i < plotData.size(); i++)
-    {
-        MyFile << plotData[i][0] << "," << plotData[i][1] << std::endl; // CSV format
-        if (i == 1000000)
-        {
-            return 0;
-        }
-    }
-    MyFile.close();
-
-    std::cout << "PCA results saved to " << writeFilePath << std::endl;
+    std::string input = "01 - m1_half_shaft_speed_no_mechanical_load";
+    streamData DataStream;
+    DataStream.readData(input);
 
     return 0;
 }
