@@ -1,0 +1,27 @@
+{
+    // Force C++ file associations
+    "files.associations": {
+        "*.cpp": "cpp",
+        "*.hpp": "cpp",
+        "*.c": "c",
+        "*.h": "c",
+        "*.cc": "cpp",
+        "*.cxx": "cpp"
+    },
+    // Format on save for C++ only
+    "editor.formatOnSave": true,
+    // C++ specific formatter
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.formatOnSave": true
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.formatOnSave": true
+    },
+    // Disable Prettier
+    "prettier.enable": false,
+    // C++ extension settings
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_style": "file"
+}

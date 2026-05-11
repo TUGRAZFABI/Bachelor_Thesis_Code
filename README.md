@@ -1,2 +1,1 @@
-# Bachelor_Thesis_Code
-Implementation of my bachelor thesis synced with overleaf
+for running mingw32-make run  
