@@ -1,4 +1,5 @@
 #include "../include/streamingData.hpp"
+#include "../include/slidingWindow.hpp"
 
 streamData::streamData() {};
 
@@ -13,6 +14,7 @@ void streamData::readData(std::string FilePath)
     while (getline(ReadFile, text))
     {
         std::cout << text << std::endl;
+        _sleep(1);
     }
 
     ReadFile.close();

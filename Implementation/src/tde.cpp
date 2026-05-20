@@ -1,5 +1,5 @@
 #include "../include/tde.hpp"
-#include <vector>
+#include <vector> //ändern zu einem array!
 
 TDE::TDE(int embedding_dimension, const std::vector<double>& data, int stride_val, int tau_val)
     : d(embedding_dimension), stride(stride_val), tau(tau_val), values(data)

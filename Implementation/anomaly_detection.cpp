@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "include/pca.hpp"
+#include "include/slidingWindow.hpp"
 #include "include/streamingData.hpp"
 #include "include/tde.hpp"
 
@@ -66,7 +67,13 @@ int main()
 
     std::string input = "01 - m1_half_shaft_speed_no_mechanical_load";
     streamData DataStream;
-    DataStream.readData(input);
+    // DataStream.readData(input);
 
+    int inputSlideStep = 1;
+    int inputSizeArray = 100;
+
+    slidingWindow window(inputSizeArray, inputSlideStep);
+    window.setValueIndex(1, 100);
+    std::cout << "test" << window.getValueIndex(1);
     return 0;
 }
