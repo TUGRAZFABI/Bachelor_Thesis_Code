@@ -11,7 +11,7 @@ class slidingWindow
   public:
     slidingWindow(int sizeWindow, int step) : windowSize(sizeWindow), slideStep(step)
     {
-        SLIDING_WINDOW = new float(windowSize);
+        SLIDING_WINDOW = new float[windowSize];
     }
 
     // getter setter
