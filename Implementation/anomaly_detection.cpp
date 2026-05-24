@@ -68,6 +68,7 @@ int main()
     std::string fileInput = "01 - m1_half_shaft_speed_no_mechanical_load";
     std::string absolutePath = "Data/" + fileInput + ".csv";
     streamData DataStream(absolutePath);
+    // DataStream.next(next_);
 
     // init of the sliding window
     int slideStep = 1;
@@ -79,6 +80,7 @@ int main()
     while (DataStream.next(next_) && !next_.empty())
     {
         window.returnSlidingWindow(DataStream);
+        std::cout << "test" << std::endl;
     }
     return 0;
 }
