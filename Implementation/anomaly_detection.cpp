@@ -65,15 +65,22 @@ int main()
 {
     std::cout << "Welcome to the Vizualizer...." << std::endl;
 
-    std::string input = "01 - m1_half_shaft_speed_no_mechanical_load";
-    streamData DataStream;
-    // DataStream.readData(input);
+    std::string fileInput = "01 - m1_half_shaft_speed_no_mechanical_load";
+    std::string absolutePath = "Data/" + fileInput + ".csv";
+    streamData DataStream(absolutePath);
+    // std::string next_;
+    // DataStream.next(next_);
 
-    int inputSlideStep = 1;
-    int inputSizeArray = 100;
+    // init of the sliding window
+    int slideStep = 1;
+    int windowSize = 100;
+    slidingWindow window(windowSize, slideStep);
+    window.returnSlidingWindow(DataStream);
 
-    slidingWindow window(inputSizeArray, inputSlideStep);
-    window.setValueIndex(1, 100);
-    std::cout << "test" << window.getValueIndex(1);
+    for (int i = 0; i < windowSize; i++)
+    {
+        std::cout << "der value" << window.getValueIndex(i) << std::endl;
+    }
+
     return 0;
 }

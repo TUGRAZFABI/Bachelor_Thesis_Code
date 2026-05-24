@@ -1,6 +1,8 @@
 #ifndef SLIDINGWINDOW_HPP
 #define SLIDINGWINDOW_HPP
 
+#include "../include/streamingData.hpp"
+
 class slidingWindow
 {
   private:
@@ -24,6 +26,8 @@ class slidingWindow
     {
         SLIDING_WINDOW[index] = value;
     }
+
+    float* returnSlidingWindow(streamData& DataStream);
 };
 
 #endif

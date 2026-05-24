@@ -7,13 +7,26 @@
 class streamData
 {
   private:
-    double current;
-    double next;
-    bool has_next;
+    std::ifstream Stream;
 
   public:
-    streamData();
-    void readData(std::string FilePath);
+    streamData(const std::string& filePath) : Stream(filePath)
+    {
+        std::string header;
+        std::getline(Stream, header);
+    };
+
+    //~streamData()
+    //{
+    //  Stream.close();
+    //};
+
+    bool next(std::string& line)
+    {
+        return static_cast<bool>(std::getline(Stream, line));
+    };
+
+    void readData();
 };
 
 #endif
