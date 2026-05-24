@@ -7,6 +7,10 @@ float* slidingWindow::returnSlidingWindow(streamData& DataStream)
     for (int i = 0; i < windowSize; i++)
     {
         DataStream.next(line);
+        if (line.empty()) // handling an case where the line is not an float.
+        {
+            break;
+        }
         float value = std::stof(line);
         setValueIndex(i, value);
         // std::cout << "test at index" << i << "value" << value;
