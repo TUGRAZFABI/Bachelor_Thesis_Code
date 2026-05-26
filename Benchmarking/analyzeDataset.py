@@ -8,25 +8,27 @@ import os
 import matplotlib.pyplot as plt
 
 files = "Benchmarking\Data"
+filesToWrite = "..\Bachelor_Thesis_Code\Implementation\Data"
 resultsTime = []
 
 for file in os.scandir(files):
+    output_path = os.path.join(filesToWrite, file.name)
     if file.is_file():
-        with open(file.path, "r") as csvfile:
-            previous = 0
-            resultVectors= []
-            counter = 0 
-            for line in csvfile.readlines():
-                if(counter > 0):    
+        with open(output_path , "w") as outputFile:
+            outputFile.write("Combined Vectors\n")
+            with open(file.path, "r") as csvfile:
+                next(csvfile) #just skip header
+                previous = 0
+                resultVectors= []
+                for line in csvfile.readlines():   
                     array = line.split(',')
                     if(len(array) == 4):
                         vector = math.sqrt((float(array[1]) ** 2) + (float(array[2]) ** 2) + (float(array[3]) ** 2))
+                        outputFile.write(f"{vector}\n")
                         resultVectors.append(vector)
-                        if(counter > 1 and float(array[0])  > float(previous)):
-                            delta = float(array[0]) - float(previous)
-                            resultsTime.append(delta)
+                        delta = float(array[0]) - float(previous)
+                        resultsTime.append(delta)
                         previous = array[0]
-                counter = counter + 1
 print("Number intervals: ", len(resultsTime))
 print("Mean delta-t: ",np.mean(resultsTime))
 print("Standard deviation: ",np.std(resultsTime))
