@@ -1,4 +1,3 @@
-import pandas as pd 
 import numpy as np
 import math
 import os 
@@ -7,7 +6,7 @@ import matplotlib.pyplot as plt
 files = "Benchmarking\Data"
 filesToWrite = "..\Bachelor_Thesis_Code\Implementation\Data"
 resultsTime = []
-notSuitable = ["05","14","16",]
+notSuitable = ["05","13","14","16",]
 
 for file in os.scandir(files):
     output_path = os.path.join(filesToWrite, file.name)
@@ -45,3 +44,7 @@ print(f"Standard deviation: {np.std(resultsTime)}")
 print(f"Median: {np.median(resultsTime)}")
 print(f"Minimum: {np.min(resultsTime)}")
 print(f"Maximum: {np.max(resultsTime)}")
+
+
+plt.plot(resultsTime)
+plt.show()
