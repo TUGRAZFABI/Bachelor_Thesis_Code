@@ -63,24 +63,35 @@ void displayVectorofVectors(std::vector<std::vector<double>> data)
 
 int main()
 {
-    std::cout << "Welcome to the Vizualizer...." << std::endl;
+    std::cout << "Real time anomaly detection...." << std::endl;
 
-    std::string fileInput = "01 - m1_half_shaft_speed_no_mechanical_load";
+    // std::string fileInput = "01 - m1_half_shaft_speed_no_mechanical_load";
+    std::string fileInput = "test";
     std::string absolutePath = "Data/" + fileInput + ".csv";
     streamData DataStream(absolutePath);
-    // DataStream.next(next_);
 
     // init of the sliding window
-    int slideStep = 1;
-    int windowSize = 100;
+    int slideStep = 2;
+    int windowSize = 10;
     slidingWindow window(windowSize, slideStep);
 
     // Main routine:
     std::string next_;
+    window.returnSlidingWindow(DataStream);
+
+    for (int i = 0; i < windowSize; i++)
+    {
+        std::cout << window.getValueIndex(i);
+    }
+    std::cout << std::endl;
     while (DataStream.next(next_) && !next_.empty())
     {
-        window.returnSlidingWindow(DataStream);
-        std::cout << "test" << std::endl;
+        window.slideWindow(DataStream);
+        for (int i = 0; i < windowSize; i++)
+        {
+            std::cout << "[" << window.getValueIndex(i) << "]";
+        }
+        std::cout << std::endl;
     }
     return 0;
 }

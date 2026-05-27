@@ -28,6 +28,7 @@ class slidingWindow
     }
 
     float* returnSlidingWindow(streamData& DataStream);
+    void slideWindow(streamData& DataStream);
 };
 
 #endif

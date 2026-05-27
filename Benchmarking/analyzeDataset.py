@@ -31,20 +31,13 @@ for file in os.scandir(files):
                             resultsTime.append(delta)
                         previous_timestamp = current_timestamp
                 
-                if len(file_deltas) > 0:
-                    print(f"\n--- {file.name} ---")
-                    print(f"file min delta: {np.min(file_deltas)}")
-                    print(f"file max delta: {np.max(file_deltas)}")
-                    print(f"file mean delta: {np.mean(file_deltas):.2f}")
-
 print("Total statistics:")
 print(f"Number intervals: {len(resultsTime)}")
-print(f"Mean delta-t: {np.mean(resultsTime)}")
-print(f"Standard deviation: {np.std(resultsTime)}")
-print(f"Median: {np.median(resultsTime)}")
-print(f"Minimum: {np.min(resultsTime)}")
-print(f"Maximum: {np.max(resultsTime)}")
-
+print(f"Mean delta-t: {np.mean(resultsTime)}"  )
+print(f"Standard deviation: {np.std(resultsTime)}" )
+print(f"Median: {np.median(resultsTime)}" )
+print(f"Minimum: {np.min(resultsTime)}" )
+print(f"Maximum: {np.max(resultsTime)}" )
 
 plt.plot(resultsTime)
 plt.show()
