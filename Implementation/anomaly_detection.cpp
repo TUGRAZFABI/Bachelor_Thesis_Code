@@ -84,7 +84,7 @@ int main()
         std::cout << window.getValueIndex(i);
     }
     std::cout << std::endl;
-    while (DataStream.next(next_) && !next_.empty())
+    while (DataStream.hasNext())
     {
         window.slideWindow(DataStream);
         for (int i = 0; i < windowSize; i++)

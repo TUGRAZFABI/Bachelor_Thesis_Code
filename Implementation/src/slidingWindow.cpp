@@ -27,7 +27,7 @@ void slidingWindow::slideWindow(streamData& DataStream)
         int currentSlideIndex = i - slideStep;
         if (currentSlideIndex >= 0 && currentSlideIndex < windowSize - slideStep)
         {
-            setValueIndex(currentSlideIndex, getValueIndex(currentSlideIndex));
+            setValueIndex(currentSlideIndex, getValueIndex(i));
         }
         else if (currentSlideIndex >= windowSize - slideStep)
         {

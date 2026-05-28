@@ -16,15 +16,19 @@ class streamData
         std::getline(Stream, header);
     };
 
-    //~streamData()
-    //{
-    //  Stream.close();
-    //};
-
     bool next(std::string& line)
     {
         return static_cast<bool>(std::getline(Stream, line));
     };
+
+    bool hasNext()
+    {
+        if (Stream.peek() != EOF)
+        {
+            return true;
+        }
+        return false;
+    }
 
     void readData();
 };
