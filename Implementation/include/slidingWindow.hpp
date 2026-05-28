@@ -27,7 +27,12 @@ class slidingWindow
         SLIDING_WINDOW[index] = value;
     }
 
-    float* returnSlidingWindow(streamData& DataStream);
+    int getWindowSize()
+    {
+        return windowSize;
+    }
+
+    void returnSlidingWindow(streamData& DataStream);
     void slideWindow(streamData& DataStream);
 };
 

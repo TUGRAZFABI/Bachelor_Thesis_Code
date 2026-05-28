@@ -1,26 +1,38 @@
 #ifndef TDE_HPP
 #define TDE_HPP
 
-#include <vector>
+#include "../include/slidingWindow.hpp"
 
 class TDE
 {
   private:
-    int d;
+    int dimension;
     int stride;
     int tau;
-    std::vector<double> values;
+
+    int size_;
+
+    float* TDE_EMBEDDING;
 
   public:
     // constructors
-    TDE(int embedding_dimension, const std::vector<double>& data, int stride_val = 1,
-        int tau_val = 1);
-    TDE();
+    TDE(int embedding_dimension, int stride_val, int tau_val, int size)
+        : dimension(embedding_dimension), stride(stride_val), tau(tau_val), size_(size)
+    {
+        TDE_EMBEDDING = new float[size_];
+    };
 
-    // main method
-    std::vector<std::vector<double>> time_delay_embedding();
-    // Overloaded method.
-    std::vector<std::vector<double>> time_delay_embedding(const std::vector<double>& values);
+    float getValueIndex(int index)
+    {
+        return TDE_EMBEDDING[index];
+    }
+
+    void setValueIndex(int index, float value)
+    {
+        TDE_EMBEDDING[index] = value;
+    }
+
+    void embedding(slidingWindow& SlidingWindow) {}
 };
 
 #endif // TDE_HPP

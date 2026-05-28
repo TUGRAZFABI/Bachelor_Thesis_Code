@@ -6,22 +6,6 @@
 #include "include/streamingData.hpp"
 #include "include/tde.hpp"
 
-std::vector<double> readFile(std::string filePath) // later this is the stream
-{
-    std::vector<double> data;
-    std::ifstream file(filePath);
-    std::string line;
-
-    while (std::getline(file, line))
-    {
-        double value = std::stod(line);
-        data.push_back(value);
-        // std::cout << "this is the value:" << value <<std::endl;
-    }
-
-    return data;
-}
-
 void writeData(std::string filePath, std::vector<double> fileToWrite, bool append = true)
 {
     std::ofstream MyFile;
@@ -70,10 +54,21 @@ int main()
     std::string next_;
     window.returnSlidingWindow(DataStream);
 
+    // init of the TDE
+    int m = 2;
+    int tau = 1;
+    int stride = 1;
+
+    int EmbeddingSize = window.getWindowSize() - (m - 1) * tau;
+
+    TDE tde(m, stride, tau, EmbeddingSize);
+
     while (DataStream.hasNext())
     {
         window.slideWindow(DataStream);
         printSlidingWindow(window, windowSize);
+        tde.embedding(window);
+        std::cout << std::endl;
     }
     return 0;
 }

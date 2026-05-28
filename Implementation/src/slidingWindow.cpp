@@ -1,7 +1,7 @@
 #include "../include/slidingWindow.hpp"
 #include "../include/streamingData.hpp"
 
-float* slidingWindow::returnSlidingWindow(streamData& DataStream)
+void slidingWindow::returnSlidingWindow(streamData& DataStream)
 {
     std::string line;
     for (int i = 0; i < windowSize; i++)
@@ -14,29 +14,24 @@ float* slidingWindow::returnSlidingWindow(streamData& DataStream)
         float value = std::stof(line);
         setValueIndex(i, value);
     }
-
-    return SLIDING_WINDOW;
 }
 
 void slidingWindow::slideWindow(streamData& DataStream)
 {
-    std::string line;
-    for (int i = 0; i < windowSize + slideStep; i++)
+    for (int i = 0; i < windowSize - slideStep; i++)
     {
-        int currentSlideIndex = i - slideStep;
-        if (currentSlideIndex >= 0 && currentSlideIndex < windowSize - slideStep)
+        setValueIndex(i, getValueIndex(i + slideStep));
+    }
+
+    std::string line;
+    for (int j = windowSize - slideStep; j < windowSize; j++)
+    {
+        DataStream.next(line);
+        if (line.empty())
         {
-            setValueIndex(currentSlideIndex, getValueIndex(i));
+            break;
         }
-        else if (currentSlideIndex >= windowSize - slideStep)
-        {
-            DataStream.next(line);
-            if (line.empty())
-            {
-                break;
-            }
-            float value = std::stof(line);
-            setValueIndex(currentSlideIndex, value);
-        }
+        float value = std::stof(line);
+        setValueIndex(j, value);
     }
 }
