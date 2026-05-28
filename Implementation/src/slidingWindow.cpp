@@ -13,7 +13,6 @@ float* slidingWindow::returnSlidingWindow(streamData& DataStream)
         }
         float value = std::stof(line);
         setValueIndex(i, value);
-        // std::cout << "test at index" << i << "value" << value;
     }
 
     return SLIDING_WINDOW;
@@ -39,7 +38,5 @@ void slidingWindow::slideWindow(streamData& DataStream)
             float value = std::stof(line);
             setValueIndex(currentSlideIndex, value);
         }
-        std::cout << "index" << i << "," << getValueIndex(currentSlideIndex) << ","
-                  << currentSlideIndex << std::endl;
     }
 }

@@ -43,22 +43,13 @@ void writeData(std::string filePath, std::vector<double> fileToWrite, bool appen
     MyFile.close();
 }
 
-void displayVectorofVectors(std::vector<std::vector<double>> data)
+void printSlidingWindow(slidingWindow window, int windowSize)
 {
-    for (const auto& innerVector : data)
+    for (int i = 0; i < windowSize; i++)
     {
-        int i = 0;
-        for (const auto& value : innerVector)
-        {
-            if (i == 2)
-            {
-                std::cout << value << " ";
-            }
-
-            i++;
-        }
-        std::cout << std::endl;
+        std::cout << "[" << window.getValueIndex(i) << "]";
     }
+    std::cout << std::endl;
 }
 
 int main()
@@ -79,19 +70,10 @@ int main()
     std::string next_;
     window.returnSlidingWindow(DataStream);
 
-    for (int i = 0; i < windowSize; i++)
-    {
-        std::cout << window.getValueIndex(i);
-    }
-    std::cout << std::endl;
     while (DataStream.hasNext())
     {
         window.slideWindow(DataStream);
-        for (int i = 0; i < windowSize; i++)
-        {
-            std::cout << "[" << window.getValueIndex(i) << "]";
-        }
-        std::cout << std::endl;
+        printSlidingWindow(window, windowSize);
     }
     return 0;
 }
