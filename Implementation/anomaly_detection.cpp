@@ -57,19 +57,20 @@ int main()
 
     // init of the TDE
     int m = 2;
-    int tau = 1;
+    int tau = 2;
 
     TDE tde(m, tau);
-    Matrix tdeResult(windowSize, m);
+
+    int matrixSize = windowSize - (m - 1) * tau;
+    Matrix tdeResult(matrixSize, m);
 
     while (DataStream.hasNext())
     {
         window.slideWindow(DataStream);
-        // printSlidingWindow(window, windowSize);
+        printSlidingWindow(window, windowSize);
 
         tde.embedding(window, tdeResult);
         tdeResult.DEBUG_PRINT();
-        break;
     }
     return 0;
 }
