@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "include/matrix.hpp"
 #include "include/pca.hpp"
 #include "include/slidingWindow.hpp"
 #include "include/streamingData.hpp"
@@ -57,18 +58,18 @@ int main()
     // init of the TDE
     int m = 2;
     int tau = 1;
-    int stride = 1;
 
-    int EmbeddingSize = window.getWindowSize() - (m - 1) * tau;
-
-    TDE tde(m, stride, tau, EmbeddingSize);
+    TDE tde(m, tau);
+    Matrix tdeResult(windowSize, m);
 
     while (DataStream.hasNext())
     {
         window.slideWindow(DataStream);
-        printSlidingWindow(window, windowSize);
-        tde.embedding(window);
-        std::cout << std::endl;
+        // printSlidingWindow(window, windowSize);
+
+        tde.embedding(window, tdeResult);
+        tdeResult.DEBUG_PRINT();
+        break;
     }
     return 0;
 }
