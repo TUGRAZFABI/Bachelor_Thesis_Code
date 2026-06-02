@@ -50,9 +50,6 @@ int main()
     int slideStep = 2;
     int windowSize = 10;
     slidingWindow window(windowSize, slideStep);
-
-    // Main routine:
-    std::string next_;
     window.returnSlidingWindow(DataStream);
 
     // init of the TDE
@@ -61,16 +58,16 @@ int main()
 
     TDE tde(m, tau);
 
+    // init of the matrix used for the tde
     int matrixSize = windowSize - (m - 1) * tau;
     Matrix tdeResult(matrixSize, m);
 
     while (DataStream.hasNext())
     {
-        window.slideWindow(DataStream);
         printSlidingWindow(window, windowSize);
-
         tde.embedding(window, tdeResult);
         tdeResult.DEBUG_PRINT();
+        window.slideWindow(DataStream);
     }
     return 0;
 }
