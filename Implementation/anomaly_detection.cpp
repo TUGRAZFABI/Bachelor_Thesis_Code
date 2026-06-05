@@ -65,7 +65,7 @@ int main()
     while (DataStream.hasNext())
     {
         printSlidingWindow(inputStep, minObservations);
-        // tde.embedding(inputStep, tdeResult);
+        embedding(&tde, &tdeResult, inputStep.returnWindowAsArray(), inputStep.getWindowSize());
         inputStep.slideWindow(DataStream);
     }
     return 0;

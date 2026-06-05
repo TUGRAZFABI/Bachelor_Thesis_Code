@@ -13,11 +13,12 @@ extern "C"
     {
         int dimension_;
         int tau_;
+        Vector* vector;
     } TDE;
 
     void tdeInit(TDE* tde, int dimension, int tau);
 
-    // void embedding(slidingWindow& SlidingWindow, Vector& output);
+    void embedding(TDE* tde, Vector* output, float slidingWindow[], int windowSize);
 #ifdef __cplusplus
 }
 #endif

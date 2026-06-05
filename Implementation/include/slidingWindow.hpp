@@ -32,6 +32,11 @@ class slidingWindow
         return windowSize;
     }
 
+    float* returnWindowAsArray()
+    {
+        return SLIDING_WINDOW;
+    }
+
     void returnSlidingWindow(streamData& DataStream);
     void slideWindow(streamData& DataStream);
 };

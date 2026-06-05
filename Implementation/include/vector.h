@@ -16,11 +16,15 @@ extern "C"
 
     void push_back(Vector* vector, float value);
 
+    void setVectorIndex(Vector* vector, int index, float value);
+
     float at(Vector* vector, int index);
 
     int returnSizeVector(Vector* vector);
 
     void freeVector(Vector* vector);
+
+    void DEBUG_PRINT_VECTOR(Vector* vector);
 #ifdef __cplusplus
 }
 #endif

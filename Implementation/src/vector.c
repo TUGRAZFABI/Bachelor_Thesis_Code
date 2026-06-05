@@ -1,10 +1,16 @@
 #include "../include/vector.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 void vectorInit(Vector* vector, int size)
 {
     vector->vectorSize_ = size;
     vector->data_ = (float*)malloc(size * sizeof(float));
+}
+
+void setVectorIndex(Vector* vector, int index, float value)
+{
+    vector->data_[index] = value;
 }
 
 void push_back(Vector* vector, float value)
@@ -29,4 +35,14 @@ int returnSizeVector(Vector* vector)
 void freeVector(Vector* vector)
 {
     free(vector);
+}
+
+void DEBUG_PRINT_VECTOR(Vector* vector)
+{
+    printf("[");
+    for (int i = 0; i < vector->vectorSize_; i++)
+    {
+        printf("%f,", vector->data_[i]);
+    }
+    printf("]\n");
 }
