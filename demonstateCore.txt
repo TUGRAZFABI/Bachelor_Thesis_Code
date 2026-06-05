@@ -1,0 +1,31 @@
+//c
+typedef struct Foo
+{
+    int size_;
+    int* data[];
+} Foo;
+
+Foo* create(int size);
+void destroy(Foo* foo);
+// setter,getter, functions etc...
+
+// c++
+class Wrapper
+{
+  private:
+    Foo* foo;
+
+  public:
+    // constructor
+    FooWrapper(int size)
+    {
+        foo = create(size);
+    }
+    // deconstructor
+    ~FooWrapper()
+    {
+        destroy(foo);
+    }
+}
+
+// java:

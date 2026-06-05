@@ -1,11 +1,10 @@
 #include <fstream>
 #include <iostream>
-#include <vector>
-#include "include/matrix.hpp"
 #include "include/pca.hpp"
 #include "include/slidingWindow.hpp"
 #include "include/streamingData.hpp"
-#include "include/tde.hpp"
+#include "include/tde.h"
+#include "include/vector.h"
 
 void writeData(std::string filePath, std::vector<double> fileToWrite, bool append = true)
 {
@@ -46,28 +45,28 @@ int main()
     std::string absolutePath = "Data/" + fileInput + ".csv";
     streamData DataStream(absolutePath);
 
-    // init of the sliding window
-    int slideStep = 2;
-    int windowSize = 10;
-    slidingWindow window(windowSize, slideStep);
-    window.returnSlidingWindow(DataStream);
-
     // init of the TDE
-    int m = 2;
+    int dimensions = 3;
     int tau = 2;
 
-    TDE tde(m, tau);
+    TDE tde;
+    tdeInit(&tde, dimensions, tau);
 
-    // init of the matrix used for the tde
-    int matrixSize = windowSize - (m - 1) * tau;
-    Matrix tdeResult(matrixSize, m);
+    int minObservations = 1 + (dimensions - 1) * tau;
+
+    // init of the vector used for the tde
+    Vector tdeResult;
+    vectorInit(&tdeResult, minObservations);
+
+    // init of the sliding window
+    slidingWindow inputStep(minObservations, 1);
+    inputStep.returnSlidingWindow(DataStream);
 
     while (DataStream.hasNext())
     {
-        printSlidingWindow(window, windowSize);
-        tde.embedding(window, tdeResult);
-        tdeResult.DEBUG_PRINT();
-        window.slideWindow(DataStream);
+        printSlidingWindow(inputStep, minObservations);
+        // tde.embedding(inputStep, tdeResult);
+        inputStep.slideWindow(DataStream);
     }
     return 0;
 }

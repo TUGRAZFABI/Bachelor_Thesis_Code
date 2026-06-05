@@ -1,24 +1,34 @@
 # Simple Makefile for Windows with MinGW
 
-# Compiler
+# Compilers
 CXX = g++
+CC = gcc
+
+# Flags
 CXXFLAGS = -std=c++17 -O2 -Wall -Iinclude -Ieigen-3.4.0
+CFLAGS = -std=c11 -O2 -Wall -Iinclude
 
 # Directories
 SRC_DIR = src
-INCLUDE_DIR = include/anomaly_detect
+INCLUDE_DIR = include
 OUTPUT_DIR = output
 
 # Target name
 TARGET = anomaly_detection
 
-# Find all source files in src directory
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-# Add main file
-SOURCES += anomaly_detection.cpp
+# Find all C++ source files
+CXX_SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+CXX_SOURCES += anomaly_detection.cpp
+
+# Find all C source files
+C_SOURCES = $(wildcard $(SRC_DIR)/*.c)
 
 # Generate object file names
-OBJECTS = $(SOURCES:.cpp=.o)
+CXX_OBJECTS = $(CXX_SOURCES:.cpp=.o)
+C_OBJECTS = $(C_SOURCES:.c=.o)
+
+# All objects
+OBJECTS = $(CXX_OBJECTS) $(C_OBJECTS)
 
 # Default target
 all: $(TARGET)
@@ -28,13 +38,17 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET).exe $(OBJECTS)
 	@echo "Build complete: $(TARGET).exe"
 
-# Compile source files to object files
+# Compile C++ source files to object files
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Compile C source files to object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # Alternative: single command to compile everything
-quick: 
-	$(CXX) $(CXXFLAGS) -o $(TARGET).exe $(SOURCES)
+quick:
+	$(CXX) $(CXXFLAGS) -o $(TARGET).exe $(CXX_SOURCES) $(C_SOURCES)
 
 # Run the program
 run: $(TARGET)
@@ -51,14 +65,14 @@ cleanall: clean
 # Help command
 help:
 	@echo "Commands (use mingw32-make):"
-	@echo "  mingw32-make       - Build the program (compiles all .cpp files)"
+	@echo "  mingw32-make       - Build the program"
 	@echo "  mingw32-make quick - Quick build (single command)"
 	@echo "  mingw32-make run   - Build and run"
 	@echo "  mingw32-make clean - Remove executable and object files"
-	@echo "  mingw32-make cleanall - Clean everything"
 
 # Debug build
 debug: CXXFLAGS += -g -DDEBUG
+debug: CFLAGS += -g -DDEBUG
 debug: clean $(TARGET)
 	@echo "Debug build complete"
 
