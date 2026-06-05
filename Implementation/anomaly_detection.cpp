@@ -56,7 +56,7 @@ int main()
 
     // init of the vector used for the tde
     Vector tdeResult;
-    vectorInit(&tdeResult, minObservations);
+    vectorInit(&tdeResult, 3);
 
     // init of the sliding window
     slidingWindow inputStep(minObservations, 1);

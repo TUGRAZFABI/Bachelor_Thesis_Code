@@ -42,7 +42,7 @@ void DEBUG_PRINT_VECTOR(Vector* vector)
     printf("[");
     for (int i = 0; i < vector->vectorSize_; i++)
     {
-        printf("%f,", vector->data_[i]);
+        printf("%2f,", vector->data_[i]);
     }
     printf("]\n");
 }
