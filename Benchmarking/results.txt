@@ -148,7 +148,6 @@ file min delta: 1856.0
 file max delta: 1968.0
 file mean delta: 1939.33
 
-
 Total statistics:
 Number intervals: 3532133
 Mean delta-t: 2027.1174771731417

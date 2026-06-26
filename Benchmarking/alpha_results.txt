@@ -1,0 +1,23 @@
+File input:01 - m1_half_shaft_speed_no_mechanical_load
+Total evaluated values: 107341.0
+Result with given n: 17.13 
+
+alpha:0.500 
+Result with EWMA: 7.705
+delta :9.427 
+
+alpha:0.050 
+Result with EWMA: 18.006
+delta :-0.874 
+
+alpha:0.005 
+Result with EWMA: 18.352
+delta :-1.219 
+
+alpha:0.001
+Result with EWMA: 16.995
+delta :0.137 
+
+alpha:0.0005 
+Result with EWMA: 16.838
+delta :0.294 
