@@ -6,109 +6,125 @@
 #include "include/AnomalyDetection.h"
 #include "include/utils.h"
 
-void writeData(std::string filePath, std::vector<double> fileToWrite, bool append = true)
+void writeData(std::string filePath, std::vector<float> fileToWrite, bool append = true)
 {
     std::ofstream MyFile;
-
     if (append)
     {
-        MyFile.open(filePath, std::ios_base::app); // append mode
+        MyFile.open(filePath, std::ios_base::app);
     }
     else
     {
-        MyFile.open(filePath); // overwrite mode (default)
+        MyFile.open(filePath);
     }
 
-    for (std::size_t i = 0; i < fileToWrite.size(); i++)
+    if (!MyFile.is_open())
     {
-        MyFile << fileToWrite.at(i) << std::endl;
+        std::cerr << "Error: Could not open or create file at path: " << filePath << std::endl;
+        return;
     }
 
+    for (std::size_t i = 0; i < fileToWrite.size(); i += 2)
+    {
+        MyFile << fileToWrite.at(i) << "," << fileToWrite.at(i + 1) << std::endl;
+    }
     MyFile.close();
 }
 
-/*void printSlidingWindow(slidingWindow window, int windowSize)
-{
-    for (int i = 0; i < windowSize; i++)
-    {
-        std::cout << "[" << window.getValueIndex(i) << "]";
-    }
-    std::cout << std::endl;
-}*/
-
 int main()
 {
+    std::vector<float> writeToFile;
     std::cout << "Real time anomaly detection...." << std::endl;
-
-    std::string fileInput = "01 - m1_half_shaft_speed_no_mechanical_load";
-    // std::string fileInput = "test";
+    int i = 2;
+    std::string fileInput = std::to_string(i);
     std::string absolutePath = "Data/" + fileInput + ".csv";
     streamData DataStream(absolutePath);
 
-    // init of the TDE
+    // 1. Time Delay Embedding (TDE) Shape Settings
     int dimensions = 3;
-    int tau = 2;
-    int minObservations = 1 + (dimensions - 1) * tau;
+    int tau = 200;
+    int tdeSpan = (dimensions - 1) * tau; // 400 samples
 
-    // calculate the indexes which are static doesnt need to recaltulate each iteration
-    // calculateTDEIndexes(&tde, inputStep.getWindowSize());
+    // 2. Sliding Window Analysis Capacity (k history elements)
+    // Needs to be larger than tdeSpan to avoid division-by-zero!
+    int windowSize = 1000;
+    std::cout << "Sliding History Window Size (k): " << windowSize << std::endl;
 
-    // next line to read:
     std::string line;
 
-    // Init of all data containers
-    float slidingWindow[minObservations];
-    float tde[dimensions];
-    float pca[minObservations];
+    // Allocate Data Containers
+    std::vector<float> slidingWindow(windowSize, 0.0f);
+    float tde[dimensions] = {0.0f};
+
     int tdeIndexes[dimensions];
-    embeddingIndexes(tdeIndexes, minObservations, dimensions, tau);
+    embeddingIndexes(tdeIndexes, windowSize, dimensions, tau);
 
-    // running mean running cov
-    float runningMean[dimensions];
-    float runningCov[dimensions * dimensions]; // flat 1d matrix
+    float runningMean = 0.0f;
+    float runningCov[dimensions * dimensions] = {0.0f};
 
-    //
-    for (int i = 0; i < minObservations; i++)
+    float eigenvalues[dimensions] = {0.0f};
+    float eigenvectors[dimensions * dimensions] = {0.0f};
+
+    // Warm up and fill the initial window buffer completely
+    for (int i = 0; i < windowSize; i++)
     {
         DataStream.next(line);
         if (line.empty())
         {
             break;
         }
-        float value = std::stof(line);
-        slideWindow(slidingWindow, minObservations, value);
+        slidingWindow[i] = std::stof(line);
     }
 
-    float tmp = 0;
-    float tmp2 = 0;
-    float alpha = 0.0005;
-    //(0.5, 0.05, and 0.005 , 0.001, 0.0005)
-
+    // Process the streaming timeline
+    int sampleCounter = windowSize;
     while (DataStream.hasNext())
     {
-        embedding(tde, slidingWindow, dimensions, tdeIndexes);
-        // printAnyArray(tde, dimensions);
-        tmp = tmp + 1;
-        tmp2 = tmp2 + tde[2];
-
-        // updateCovariance(runningCov, tde, runningMean, dimensions);
-        // printAnyArray(runningCov, dimensions * dimensions);
-        updateMean(runningMean, tde, dimensions, alpha);
-        // slide window
         DataStream.next(line);
         if (line.empty())
         {
             break;
         }
         float value = std::stof(line);
-        slideWindow(slidingWindow, minObservations, value);
-    }
-    std::cout << "File input:" << fileInput << std ::endl;
-    float correctMean = tmp2 / tmp;
-    printf("Total evaluated values: %.1f\nResult with given n: %.2f \nalpha:%.4f "
-           "\nResult with "
-           "EWMA: %.3f \ndelta :%.3f \n",
-           tmp, correctMean, alpha, runningMean[1], correctMean - runningMean[1]);
 
+        // 1. Update the incremental sliding properties
+        PCA(&runningMean, runningCov, tde, slidingWindow.data(), dimensions, windowSize, value,
+            tdeIndexes);
+        sampleCounter++;
+
+        // 2. Create a scaled matrix copy for the Jacobi solver
+        float scaledCov[dimensions * dimensions];
+        int numVectorsInWindow = windowSize - tdeSpan; // 1000 - 400 = 600 active vectors
+
+        for (int m = 0; m < dimensions * dimensions; m++)
+        {
+            // Bounded division (Divides by 599, avoiding 0-division NaN)
+            scaledCov[m] = runningCov[m] / (float)(numVectorsInWindow - 1);
+        }
+
+        // 3. Solve Eigenvalues/Eigenvectors using the stable matrix
+        jacobiEigenvalue(scaledCov, dimensions, eigenvalues, eigenvectors);
+
+        // 4. Locate dominant principal components
+        int idx_pc1 = 0;
+        int idx_pc2 = 0;
+        findTopTwoComponents(eigenvalues, dimensions, &idx_pc1, &idx_pc2);
+
+        // 5. Project current TDE state vector into the 2D plane
+        float projected_X = 0.0f;
+        float projected_Y = 0.0f;
+        projectData(tde, eigenvectors, dimensions, idx_pc1, &projected_X);
+        projectData(tde, eigenvectors, dimensions, idx_pc2, &projected_Y);
+
+        // 6. Push coordinates sequentially into output vector
+        writeToFile.push_back(projected_X);
+        writeToFile.push_back(projected_Y);
+    }
+
+    // Write out the fresh data trajectory (False to overwrite cleanly)
+    std::string outputPath = "Data/output.txt";
+    writeData(outputPath, writeToFile, false);
+
+    std::cout << "Done! Fingerprint data stored successfully." << std::endl;
     return 0;
 }
