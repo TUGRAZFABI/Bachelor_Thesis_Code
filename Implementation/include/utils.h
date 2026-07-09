@@ -8,11 +8,11 @@
 extern "C"
 {
 #endif
-    void printAnyArray(float* buffer, int size)
+    inline void printAnyArray(float* buffer, int size)
     {
         for (int i = 0; i < size; i++)
         {
-            printf("[%2.f],", buffer[i]);
+            printf("[%f],", buffer[i]);
         }
         printf("\n");
     }
