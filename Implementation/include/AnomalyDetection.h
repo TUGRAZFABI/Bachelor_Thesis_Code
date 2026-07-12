@@ -27,13 +27,12 @@ extern "C"
     void updateMean(float* runningMean, float* slidingWindow, int windowSize, float oldestValue);
     void centerData(float* runningMean, float* tde, int dimensions);
 
-    void copyArray(float* array1, float* array2, int dimensions);
+    void copyArray(float* inputArray, float* outputArray, int dimensions);
     int indexAccessHelper(int row, int column, int dimensions);
 
     void updateCovariance(float* runningCov, float* tde, float* tdeOld, int dimensions);
 
-    void jacobiEigenvalue(const float* runningCov, int dim, float* eigenvalues,
-                          float* eigenvectors);
+    void jacobiEigenvalue(float* runningCov, int dim, float* eigenvalues, float* eigenvectors);
     void findTopTwoComponents(const float* eigenvalues, int dim, int* idx_pc1, int* idx_pc2);
     void projectData(float* tde, float* eigenvectors, int dimensions, int targetComponentIdx,
                      float* outputProjection);
