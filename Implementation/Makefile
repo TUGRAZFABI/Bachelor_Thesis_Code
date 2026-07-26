@@ -5,7 +5,12 @@ CXX = g++
 CC = gcc
 
 # Flags
-CXXFLAGS = -std=c++17 -O2 -Wall -Iinclude -Ieigen-3.4.0
+# -static-libgcc/-static-libstdc++: this machine has more than one MinGW toolchain on PATH
+# (Strawberry Perl's and Git's bundled one). Dynamically linking libstdc++-6.dll risks
+# loading a different toolchain's copy at runtime than the one used to compile, which is
+# an ABI mismatch that crashes inside the C++ standard library (seen in std::ifstream).
+# Static-linking removes the dependency on which DLL happens to be found first in PATH.
+CXXFLAGS = -std=c++17 -O2 -Wall -Iinclude -Ieigen-3.4.0 -static-libgcc -static-libstdc++
 CFLAGS = -std=c11 -O2 -Wall -Iinclude
 
 # Directories

@@ -24,24 +24,35 @@ def time_delay_embedding(values, d, tau=1, stride=1):
     return np.array(windows)
 
 def plot_embedding(ax, tde, title="TDE"):
-    projected = PCA(n_components=2).fit_transform(tde)
+    pca = PCA(n_components=2)
+    projected = pca.fit_transform(tde)
+    
+    cov_matrix = np.cov(tde, rowvar=False)
+    
+    print("Covariance Matrix Shape:", cov_matrix.shape)
+    print("Top-left 3x3 corner:\n", cov_matrix[:3, :3]) 
+    
+    # Save the full matrix to a text file for your C validation script
+    np.savetxt("python_cov_matrix.txt", cov_matrix, fmt="%.6f")
     scores = []
     for point in projected:
         scores.append(np.linalg.norm(point))
     scores = np.array(scores)
     scores_norm = (scores - np.min(scores)) / (np.max(scores) - np.min(scores))
+    print(projected)
     ax.scatter(projected[:, 0], projected[:, 1], s=8, c=colormaps["turbo"](scores_norm))
     ax.axis("off")
     ax.set_title(title, fontsize=30)
 
 
-path = r'C:\Users\39320\Desktop\bachelor_thesis\Bachelor_Thesis_Code\Implementation\Data\02 - m1_load_0.5Nm_half_speed.csv'
+path = r'C:\Users\39320\Desktop\bachelor_thesis\Bachelor_Thesis_Code\Implementation\Data\20.csv'
 values = np.loadtxt(path,skiprows=1)
 
 # Input: values.npy as a 1D numpy array, ideally a vibration
 plt.figure(figsize=(12, 6))
 fig, ax = plt.subplots(nrows=1, ncols=1)
-tde = time_delay_embedding(values, d=100, tau=1, stride=1)
+tde = time_delay_embedding(values, d=12, tau=1, stride=1)
 plot_embedding(ax, tde)
 
 plt.savefig("tde.png")
+plt.show()

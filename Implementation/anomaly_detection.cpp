@@ -35,16 +35,16 @@ int main()
 {
     std::vector<float> writeToFile;
     std::cout << "Real time anomaly detection...." << std::endl;
-    int i = 2;
+    int i = 20;
     std::string fileInput = std::to_string(i);
     std::string absolutePath = "Data/" + fileInput + ".csv";
     streamData DataStream(absolutePath);
     std::string line;
 
     // Settings of sliding window and tde vector.
-    int dimensions = 3;
-    int tau = 200;
-    int windowSize = 1000;
+    int dimensions = 12;
+    int tau = 1;
+    int windowSize = 100000; // theoretisch extrem groß wählen
 
     float slidingWindow[windowSize] = {0.0f};
     float tde[dimensions] = {0.0f};
@@ -52,26 +52,19 @@ int main()
     int tdeIndexes[dimensions];
     embeddingIndexes(tdeIndexes, windowSize, dimensions, tau);
 
-    float runningMean = 0.0f;
+    float runningMean[dimensions] = {0.0f};
     float runningCov[dimensions * dimensions] = {0.0f};
 
     float eigenvalues[dimensions] = {0.0f};
     float eigenvectors[dimensions * dimensions] = {0.0f};
 
+    int sampleCount = 0;
     float outX = 0.0f;
     float outY = 0.0f;
 
-    // Warm up and fill the initial window buffer completely
-    for (int i = 0; i < windowSize; i++)
-    {
-        DataStream.next(line);
-        if (line.empty())
-        {
-            break;
-        }
-        slidingWindow[i] = std::stof(line);
-    }
-
+    // No separate warm-up phase: processNewDataPoint is safe to call from the very first
+    // sample and reports readiness via its return value once there's enough history for a
+    // valid embedded vector and a defined covariance (n >= 2).
     while (DataStream.hasNext())
     {
         DataStream.next(line);
@@ -81,8 +74,9 @@ int main()
         }
         float value = std::stof(line);
 
-        processNewDataPoint(value, tde, slidingWindow, &runningMean, runningCov, eigenvalues,
-                            eigenvectors, tdeIndexes, windowSize, dimensions, &outX, &outY);
+        processNewDataPoint(value, tde, slidingWindow, runningMean, runningCov, eigenvalues,
+                            eigenvectors, tdeIndexes, windowSize, dimensions, &sampleCount, &outX,
+                            &outY);
 
         writeToFile.push_back(outX);
         writeToFile.push_back(outY);

@@ -1,1 +1,5 @@
-
+Implementation/Data/
+Implementation/anomaly_detection.exe
+Implementation/anomaly_detection.o
+Implementation/src/AnomalyDetection.c
+Implementation/src/AnomalyDetection.o

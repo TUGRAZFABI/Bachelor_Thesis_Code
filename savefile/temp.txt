@@ -1,0 +1,24 @@
+PCA(&runningMean, runningCov, tde, slidingWindow, dimensions, windowSize, value,
+            tdeIndexes);
+
+        float scaledCov[dimensions * dimensions];
+        int numVectorsInWindow = windowSize - tdeSpan;
+
+        for (int m = 0; m < dimensions * dimensions; m++)
+        {
+            scaledCov[m] = runningCov[m] / (float)(numVectorsInWindow - 1);
+        }
+
+        jacobiEigenvalue(scaledCov, dimensions, eigenvalues, eigenvectors);
+
+        int idx_pc1 = 0;
+        int idx_pc2 = 0;
+        findTopTwoComponents(eigenvalues, dimensions, &idx_pc1, &idx_pc2);
+
+        // 5. Project current TDE state vector into the 2D plane
+        float projected_X = 0.0f;
+        float projected_Y = 0.0f;
+        projectData(tde, eigenvectors, dimensions, idx_pc1, &projected_X);
+        projectData(tde, eigenvectors, dimensions, idx_pc2, &projected_Y);
+
+        // 6. Push coordinates sequentially into output vector

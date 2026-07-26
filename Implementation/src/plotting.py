@@ -1,31 +1,32 @@
 import numpy as np
 import pandas as pd
+from matplotlib.pyplot import colormaps
 import matplotlib.pyplot as plt
 
 file_path = r'C:\Users\39320\Desktop\bachelor_thesis\Bachelor_Thesis_Code\Implementation\Data\output.txt'
 
 # MODIFIED: Use read_csv and specify the comma delimiter to unpack columns
 # names=['X', 'Y'] assigns clean column names automatically
-df = pd.read_csv(file_path, nrows= 10000000, header=None, sep=',', names=['X', 'Y'])
+df = pd.read_csv(file_path, nrows= 30000, header=None, sep=',', names=['X', 'Y'])
 
 print("First few rows of extracted coordinates:")
 print(df.head())
 
+projected = df[['X', 'Y']].to_numpy()
+
+# Color by distance from the origin, same as the reference implementation's
+# "scores" (norm of each projected point), normalized to [0, 1].
+scores = np.linalg.norm(projected, axis=1)
+scores_norm = (scores - np.min(scores)) / (np.max(scores) - np.min(scores))
+
 # --- 2D VISUAL FINGERPRINT PLOT ---
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(12, 6))
+fig, ax = plt.subplots(nrows=1, ncols=1)
 
-# Plot X vs Y as a scatter plot to construct the visual cluster maps
-plt.scatter(df['X'], df['Y'], c=df.index, cmap='viridis', s=15, alpha=0.7)
-
-# Add a colorbar tracking the passage of time/samples
-cbar = plt.colorbar()
-cbar.set_label('Time / Sample Index (Window Progress)', fontsize=12)
-
-plt.xlabel('Principal Component 1 (X Axis)', fontsize=12)
-plt.ylabel('Principal Component 2 (Y Axis)', fontsize=12)
-plt.title('Streaming PCA Visual Fingerprint Spatial Mapping', fontsize=14, fontweight='bold')
-plt.grid(True, linestyle='--', alpha=0.5)
+ax.scatter(projected[:, 0], projected[:, 1], s=8, c=colormaps["turbo"](scores_norm))
+ax.axis("off")
+ax.set_title("TDE", fontsize=30)
 
 # Save the fingerprint layout graph
-plt.savefig("visual_fingerprint_2D.png", dpi=150, bbox_inches='tight')
+plt.savefig("tde.png")
 plt.show()
